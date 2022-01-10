@@ -1,0 +1,294 @@
+Let's make a game!
+        name:Minecraft Clicker
+        by:Xynox, Embleslyies and Howard(Phat Pig)
+        desc:Have you ever played Minecraft before? Well, now, you can play an idle clicker version of it! Click the mining button to find out what is next! <//><b>Game version:v1.8 - Diamonds...<//>Update Details:</b><.>Added Diamonds and 5 achievements.<//><.>Added full iron achievement.
+        created:07/01/2022
+        updated:09/01/2022
+        version:1.8
+ 
+//Game link is here:http://orteil.dashnet.org/igm/?g=KcHipS5x
+ 
+Settings
+        background:
+        building cost increase:120%
+        building cost refund:90%
+        stylesheet:stuff/bigBlue.css
+ 
+Layout
+        use default
+ 
+Buttons
+        *mineButton
+                name:Time to start mining for the caves!
+                desc:Click the button on top to get some ores!
+                on click:anim icon wobble
+				on click:yield 1 stone
+				on click:if (have stonePickaxe and chance(5%)) yield 1 rawiron
+				on click:if (have ironPickaxe and chance(20%)) yield 1 rawiron
+				on click:if (have ironPickaxe and chance(20%)) yield 1 rawcopper
+				on click:if (have ironPickaxe and chance(10%)) yield 1 rawgold
+				on click:if (have fulliron and chance(1%)) yield 1 diamond
+                icon:https://qph.fs.quoracdn.net/main-qimg-55fa328eb3ffc93e2f48090fe96d3ac4
+                no text
+                class:bigButton hasFlares noBackground
+                icon class:shadowed
+                tooltip origin:bottom
+                tooltip class:red 
+ 
+Resources
+		*stone
+			name:Stone
+			desc:A simple stone. You'll find lots of these in your adventure.
+			class:noBackground
+			show earned
+
+		*rawiron
+			name:Raw Iron
+			desc:Finally! Something good. Can be smelted into iron ingots, to make better tools and better armour.
+			class:noBackground
+			show earned
+			hidden when 0
+
+		*rawcopper
+			name:Raw Copper			
+			desc:Can be used for building bases, but isn't all that useful.
+			class:noBackground
+			show earned
+			hidden when 0
+
+		*rawgold
+			name:Raw Gold
+			desc:Good for going in the nether...
+			class:noBackground
+			show earned
+			hidden when 0
+
+		*iron
+			name:Iron Ingots
+			desc:Used to make better tools and better armour - can be crafted in a furnace
+			class:noBackground
+			show earned
+			hidden when 0
+
+
+		*copper
+			name:Copper Ingots
+			desc:Used to make buildings and bases - not that useful but can still be crafted in a furnace
+			class:noBackground
+			show earned
+			hidden when 0
+
+
+		*gold
+			name:Gold Ingots
+			desc:Used to make armour and tools but not necessarily better than iron. Good for going to the nether.
+			class:noBackground
+			show earned
+			hidden when 0
+
+		*diamond
+			name:Diamond
+			desc:Every Minecraft gamer's dream - Diamonds. Used to create way better tools and armour.
+			class:noBackground
+			show earned
+			hidden when 0
+
+Shinies
+	*mob
+		on click:log Woop
+		movement:onRight moveLeft fade bounce:0.05
+		frequency:30
+		frequency variation:20
+		icon:https://www.pngkit.com/png/full/241-2417870_minecraft-creeper-face-png-for-kids-creeper-de.png
+		class:bigButton
+		on click:
+			$boost=1
+			if (have fulliron) $boost=5
+			if (have goldsword) $boost=10
+			if (have ironsword) $boost=20
+			if (chance(50%))
+				$amount=max(7,random(stone:ps*60*1,stone:ps*60*3))*$boost
+				toast The lucky mob dropped<//><b>[$amount] stone</b>.
+				yield $amount stone
+			else
+				$amount=1*$boost
+				toast The lucky mob dropped<//><b>[$amount] iron ingot[s?$amount]</b>!
+				yield $amount iron
+			end
+		end
+
+Buildings
+		*autominer
+			name:Auto Miner
+			desc:An automatic miner would like to come and help.<//><b>Effect:</b><//>Get 1 stone per second(At first)
+			cost:15 stone
+			on tick:yield 1 stone
+
+		*ironsmelter
+			name:Iron Smelter
+			desc:A furnace specifically used for turning raw iron in to iron ingots.<//><b>Effect:</b><//>Automatically turn raw iron into iron ingots. *Note: Can only have one.
+			cost:80 stone and 1 rawiron
+			on tick:if (have rawiron and chance(100%)) yield 1 iron
+			on tick:if (have rawiron and chance(100%)) yield -1 rawiron
+			on tick:if (have supersmelter and chance(100%)) yield 2 iron
+			on tick:if (have supersmelter and chance(100%)) yield -1 rawiron
+			limit:1
+			cost increase:100%
+			req:5 rawiron:earned
+
+		*coppersmelter
+			name:Copper Smelter
+			desc:A furnace specifically used for turning raw copper in to copper ingots.<//><b>Effect:</b><//>Automatically turn raw copper into copper ingots. *Note: Can only have one.
+			cost:250 stone and 50 iron
+			on tick:if (have rawcopper and chance(100%)) yield 1 copper
+			on tick:if (have rawcopper and chance(100%)) yield -1 rawcopper
+			on tick:if (have supersmelter and chance(100%)) yield 2 copper
+			on tick:if (have supersmelter and chance(100%)) yield -1 rawcopper
+			limit:1
+			cost increase:100%
+			req:ironsmelter>=1 and 5 rawcopper:earned
+
+		*goldsmelter
+			name:Gold Smelter
+			desc:A furnace specifically used for turning raw gold in to gold ingots.<//><b>Effect:</b><//>Automatically turn raw gold into gold ingots. *Note: Can only have one
+			cost:500 stone and 100 iron
+			on tick:if (have rawgold and chance(100%)) yield 1 gold
+			on tick:if (have rawgold and chance(100%)) yield -1 rawgold
+			on tick:if (have supersmelter and chance(100%)) yield 2 gold
+			on tick:if (have supersmelter and chance(100%)) yield -1 rawgold
+			limit:1
+			cost increase:100%
+			req:coppersmelter>=1 and 5 rawgold:earned
+		
+		*oreminer
+			name:Ore Miner
+			desc:A miner that goes more into the depths of the caves and finds valuable ores for you.<//><b>Effect:</b><//>Get 5 raw iron, 5 raw copper and 1 raw gold per second.
+			cost:50 iron and 50 copper and 10 gold
+			on tick:yield 5 rawiron
+			on tick:yield 5 rawcopper
+			on tick:yield 1 rawgold
+			req:goldsmelter>=1 and autominer>=10
+
+		*ultrasmelter
+			name:Ultra Smelter
+			desc:A smelter that can smelt insane amount of stuff from your ore miners.<//><b>Effect:</b><//>Smelts 20k raw iron, copper, gold per second into ingots repectively.
+			cost:100000 stone and 1000 iron and 1000 copper and 1000 gold
+			on tick:if (have rawgold and chance(100%)) yield 20000 gold
+			on tick:if (have rawgold and chance(100%)) yield -20000 rawgold
+			on tick:if (have rawcopper and chance(100%)) yield 20000 copper
+			on tick:if (have rawcopper and chance(100%)) yield -20000 rawcopper
+			on tick:if (have rawiron and chance(100%)) yield 20000 iron
+			on tick:if (have rawiron and chance(100%)) yield -20000 rawiron
+Upgrades
+		*stonePickaxe
+			name:A better Pickaxe
+			desc:It is time to make a new pickaxe - with stone.<//><b>Effect:</b><//>Get 1 more stone per click(At first) and unlocks iron.
+			cost:30 stone
+			on tick:multiply stone yield of mineButton by 2
+			req:50 stone
+
+		*ironPickaxe
+			name:Iron Pickaxe!
+			desc:Time to craft an even better pickaxe!<//><b>Effect:</b><//>Get 8 more stone per click(At first) and unlocks gold and copper.
+			cost:30 iron
+			on tick:multiply stone yield of mineButton by 5
+			on tick:multiply rawiron yield of mineButton by 2
+			req:50 stone
+
+		*ironhelmet
+			name:Iron Helmet
+			desc:Time to get some armour. Costs gold?<//><b>Effect:</b><//>Increase protection(nothing, really) and increases lucky mob loot(only when full set).
+			cost:50 iron and 1 gold
+			req:goldsmelter
+
+		*ironchestplate
+			name:Iron Chestplate
+			desc:Most expensive piece of armour. Costs 2 gold instead of 1.<//><b>Effect:</b><//>Increase efficiency of smelters and increases lucky mob loot(only when full set).
+			on tick:multiply yield of ironsmelter by 2
+			on tick:multiply yield of coppersmelter by 2
+			on tick:multiply yield of goldsmelter by 2
+			cost:80 iron and 2 gold
+			req:goldsmelter
+
+		*ironleggings
+			name:Iron Leggings
+			desc:Still costs 2 gold. Why? I dunno, ask the developer of this game.<//><b>Effect:</b><//>Increase auto miner efficiency and increases lucky mob loot(only when full set).
+			on tick:multiply yield of autominer by 5
+			cost:70 iron and 2 gold
+			req:goldsmelter
+
+		*ironboots
+			name:Iron Boots
+			desc:Wait. I am the developer of this game. Huh.<//><b>Effect:</b><//>Unlock diamonds (only when full set) and increases lucky mob loot(only when full set).
+			cost:40 iron and 1 gold
+			req:goldsmelter
+
+		*goldsword
+			name:Golden Sword
+			desc:Used for killing mobs.<//><b>Effect:</b><//>Increases lucky mob loot.
+			cost:100 gold
+			req:fulliron
+		
+		*ironsword
+			name:Iron Sword
+			desc:Used for killing more mobs.<//><b>Effect:</b><//>Increases lucky mob loot again.
+			cost:200 iron and 5 gold
+			req:diamond>=1 and goldsword
+
+		*supersmelter
+			name:Super Smelters
+			desc:1 raw ore is worth 2 ingots.<//><b>Effect:</b><//>Increase raw ore worth.
+			cost:500 rawiron and 500 rawcopper
+			req:oreminer>=1
+
+Achievements
+
+		*stoneach1
+			name:It's a start
+			desc:Well, it's a start: Get 1 stone.
+			req:stone>=1
+
+		*stoneach2
+			name:There's too many stacks of stone!
+			desc:Get 10000 stone
+			req:stone>=10000
+		
+		*ironach
+			name:Iron!
+			desc:You found some iron!
+			req:rawiron>=1
+		
+		*smelter
+			name:Smelter
+			desc:Smelt some iron.
+			req:iron>=1 and ironsmelter>=1
+
+		*diamonds
+			name:Diamonds!
+			desc:Noice.
+			req:diamond>=1
+
+		*stonepickach
+			name:Getting an Upgrade
+			desc:You achieved getting a stone pickaxe!
+			req:stonePickaxe
+
+		*ironpickach
+			name:Isn't it Iron Pick
+			desc:You achieved getting an iron pickaxe!
+			req:ironPickaxe
+
+		*goldswordach
+			name:Bad Flashy Sword
+			desc:Very low durablity. But you still achieved getting a golden sword!
+			req:goldsword
+
+		*ironswordach
+			name:Good But Not Flashy Sword
+			desc:Nice iron sword. Not as good as a diamond one though. But you still achieved getting an iron one!
+			req:ironsword
+
+		*fulliron
+			name:Suit Up
+			desc:You achieved getting full iron armour!
+			req:ironhelmet and ironchestplate and ironleggings and ironboots
